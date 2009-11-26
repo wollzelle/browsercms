@@ -117,6 +117,7 @@ module Cms
       depth = options.has_key?(:depth) ? options[:depth].to_i : 1.0/0
       show_all_siblings = options[:show_all_siblings] || false
       
+      active_ancestors = []
       # We are defining a recursive lambda that takes the top-level sections
       fn = lambda do |section_nodes, current_depth|
         section_nodes.map do |section_node|
@@ -124,6 +125,7 @@ module Cms
           
           item = {}
           item[:selected] = true if selected_page == node
+          active_ancestors.each {|n| n[:active] = true} if options.has_key?(:active_parents) if item[:selected]
           item[:id] = "#{section_node.node_type.underscore}_#{section_node.node_id}"
           
           # If we are showing a section item, we want to use the path for the first page
@@ -141,7 +143,9 @@ module Cms
              current_depth < depth &&
              (show_all_siblings || ancestors.include?(node)) &&
              !node.visible_child_nodes.empty?
+            active_ancestors<<item
             item[:children] = fn.call(node.visible_child_nodes, current_depth + 1)
+            active_ancestors.delete(item)
           end
           
           item

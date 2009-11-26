@@ -25,6 +25,24 @@ class Cms::MenuHelperTest < ActionView::TestCase
 
     @page = @bal
     assert_equal expected, menu_items
+
+    expected = [
+      { :id => "section_#{@afc.id}", :active => true, :url => "/buf", :name => "AFC", :children => [
+          { :id => "section_#{@afc_east.id}", :url => "/buf", :name => "East" },
+          { :id => "section_#{@afc_north.id}", :active => true, :url => "/bal", :name => "North", :children => [
+              { :id => "page_#{@bal.id}", :selected => true, :url => "/bal", :name => "Baltimore Ravens" },
+              { :id => "page_#{@cin.id}", :url => "/cin", :name => "Cincinnati Bengals" },
+              { :id => "page_#{@cle.id}", :url => "/cle", :name => "Cleveland Browns" },
+              { :id => "page_#{@pit.id}", :url => "/pit", :name => "Pittsburgh Steelers" }
+            ] },
+          { :id => "section_#{@afc_south.id}", :url => "/hou", :name => "South" },
+          { :id => "section_#{@afc_west.id}", :url => "/den", :name => "West" }
+        ] },
+      { :id => "section_#{@nfc.id}", :url => "/dal", :name => "NFC" }
+    ]
+    
+    assert_equal expected, menu_items(:page => @bal, :active_parents => true)
+
     
     expected = [
       { :id => "section_#{@afc.id}", :url => "/buf", :name => "AFC", :children => [
